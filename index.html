@@ -803,6 +803,40 @@ body.simulation-active *{
   }
 
 }
+
+
+/* ---------- EDITABLE WEBSITE PAGE BOX ---------- */
+:root {
+  --website-box-width: min(900px, 92vw); /* horizontal size */
+  --website-box-height: 160px;           /* vertical size */
+  --website-box-top: 0px;                /* distance from top */
+  --website-box-font-size: clamp(18px, 1.6vw, 30px);
+}
+
+.website-page-box {
+  position: fixed;
+  z-index: 100001;
+  top: var(--website-box-top);
+  left: 50%;
+  transform: translateX(-50%);
+  width: var(--website-box-width);
+  height: var(--website-box-height);
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 18px 28px;
+  overflow: hidden;
+  background: #292C31;
+  color: #FFFFFF;
+  font-family: "Segoe UI", Arial, sans-serif;
+  font-size: var(--website-box-font-size);
+  font-weight: 500;
+  line-height: 1.35;
+  text-align: center;
+  pointer-events: none;
+}
+
 </style>
 </head>
 
@@ -1119,6 +1153,12 @@ body.simulation-active *{
 
 <div class="training">
   SECURITY TRAINING SIMULATION
+</div>
+
+<!-- Edit this text whenever you want to change what appears in the box. -->
+<div class="website-page-box">
+  this is my website page.<br>
+  This is the website page for the box.
 </div>
 </div>
 
