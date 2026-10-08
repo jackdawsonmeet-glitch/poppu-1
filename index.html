@@ -1,0 +1,1468 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Security Team</title>
+
+<style>
+*{
+  box-sizing:border-box;
+}
+
+html,body{
+  margin:0;
+  width:100%;
+  height:100%;
+  font-family:"Segoe UI",Arial,sans-serif;
+  overflow:hidden;
+  background:#eef1f5;
+}
+
+/* Hide cursor only while the training simulation is active */
+body.simulation-active,
+body.simulation-active *{
+  cursor:none !important;
+}
+
+/* ---------- START SCREEN ---------- */
+
+#start{
+  position:fixed;
+  inset:0;
+  z-index:99999;
+  display:none; /* Changed to none */
+  align-items:center;
+  justify-content:center;
+  background:#f4f6f8;
+}
+
+.startbox{
+  width:min(480px,90vw);
+  background:#fff;
+  padding:34px;
+  border-radius:12px;
+  box-shadow:0 20px 60px rgba(0,0,0,.25);
+  text-align:center;
+}
+
+.startbox h2{
+  margin-top:0;
+  font-size:26px;
+}
+
+.startbox p{
+  color:#555;
+  line-height:1.5;
+}
+
+.startbox button{
+  width:100%;
+  padding:15px;
+  border:0;
+  border-radius:6px;
+  background:#1473e6;
+  color:#fff;
+  font-size:17px;
+  cursor:pointer;
+}
+
+
+/* ---------- FAKE BROWSER ---------- */
+
+#demo{
+  display:block; /* Changed to block */
+  position:fixed;
+  inset:0;
+  background:#fff;
+}
+
+.browser{
+  position:absolute;
+  inset:0;
+  background:#fff;
+}
+
+.browser-top{
+  height:83px;
+  background:#f5f5f5;
+  border-bottom:1px solid #bbb;
+}
+
+.controls{
+  height:46px;
+  display:flex;
+  align-items:center;
+  gap:15px;
+  padding:7px 25px;
+}
+
+.arrow{
+  font-size:30px;
+  color:#777;
+}
+
+.address{
+  flex:1;
+  max-width:620px;
+  height:35px;
+  background:#fff;
+  border:3px solid #6da5ec;
+  border-radius:9px;
+  display:flex;
+  align-items:center;
+  padding:0 13px;
+  font-size:17px;
+}
+
+.sitebar{
+  height:37px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:14px;
+  color:#333;
+}
+
+.fake-logo{
+  display:inline-grid;
+  grid-template-columns:10px 10px;
+  grid-template-rows:10px 10px;
+  gap:2px;
+  margin-right:7px;
+}
+
+.fake-logo i:nth-child(1){background:#ef4b23}
+.fake-logo i:nth-child(2){background:#70bb18}
+.fake-logo i:nth-child(3){background:#00a4ef}
+.fake-logo i:nth-child(4){background:#ffb900}
+
+
+/* ---------- FAKE SITE ---------- */
+
+.site{
+  position:absolute;
+  top:83px;
+  bottom:0;
+  left:0;
+  right:0;
+  background:
+    linear-gradient(120deg,#272d82,#117f87);
+}
+
+.navbar{
+  height:70px;
+  background:#fff;
+  display:flex;
+  align-items:center;
+  padding:0 70px;
+  gap:25px;
+}
+
+.site-logo{
+  font-size:20px;
+  font-weight:600;
+}
+
+.hero{
+  height:255px;
+  background:linear-gradient(120deg,#33298c,#08777c);
+}
+
+.content{
+  background:#fff;
+  min-height:500px;
+  padding:45px 70px;
+}
+
+.content h1{
+  font-size:34px;
+}
+
+.content p{
+  color:#555;
+  max-width:700px;
+}
+
+
+
+/* ---------- DETAILED TRAINING BACKGROUND SITE ---------- */
+
+.invite-banner{
+  height:48px;
+  background:#ececec;
+  display:flex;
+  align-items:center;
+  padding:0 52px;
+  font-size:14px;
+  color:#222;
+  border-bottom:1px solid #d6d6d6;
+}
+
+.invite-banner .invite-action{
+  margin-left:auto;
+  background:#0f6cbd;
+  color:#fff;
+  border-radius:2px;
+  padding:8px 15px;
+  font-size:12px;
+  font-weight:600;
+}
+
+.invite-banner .invite-close{
+  margin-left:20px;
+  font-size:20px;
+  color:#777;
+}
+
+.navbar.detail-nav{
+  height:66px;
+  padding:0 48px;
+  gap:22px;
+  border-bottom:1px solid #e3e3e3;
+  box-shadow:0 1px 0 rgba(0,0,0,.03);
+}
+
+.detail-brand{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:18px;
+  font-weight:700;
+}
+
+.detail-divider{
+  width:1px;
+  height:26px;
+  background:#bbb;
+  margin:0 4px;
+}
+
+.nav-link{
+  font-size:14px;
+  color:#222;
+}
+
+.nav-right{
+  margin-left:auto;
+  display:flex;
+  align-items:center;
+  gap:20px;
+  color:#555;
+  font-size:13px;
+}
+
+.subnav{
+  height:44px;
+  background:#fff;
+  padding:0 48px;
+  display:flex;
+  align-items:center;
+  gap:32px;
+  font-size:12px;
+  color:#666;
+  border-bottom:1px solid #ececec;
+}
+
+.detail-hero{
+  height:250px;
+  display:grid;
+  grid-template-columns:1.15fr 1fr;
+  background:linear-gradient(115deg,#33298c 0%,#3b2ea0 42%,#08777c 100%);
+  color:#fff;
+  overflow:hidden;
+}
+
+.hero-copy{
+  padding:44px 56px;
+}
+
+.hero-copy h1{
+  margin:0 0 14px;
+  font-size:38px;
+  line-height:1.05;
+  font-weight:650;
+}
+
+.hero-copy p{
+  margin:0 0 24px;
+  max-width:430px;
+  font-size:16px;
+  line-height:1.45;
+  opacity:.95;
+}
+
+.hero-button{
+  display:inline-block;
+  background:#fff;
+  color:#1b1b1b;
+  padding:10px 18px;
+  border-radius:3px;
+  font-size:14px;
+  font-weight:700;
+}
+
+.hero-art{
+  position:relative;
+  overflow:hidden;
+}
+
+.hero-art:before,
+.hero-art:after{
+  content:"";
+  position:absolute;
+  border-radius:50%;
+  filter:blur(.1px);
+}
+
+.hero-art:before{
+  width:340px;
+  height:340px;
+  right:-55px;
+  top:-55px;
+  background:rgba(255,255,255,.10);
+}
+
+.hero-art:after{
+  width:230px;
+  height:230px;
+  right:130px;
+  bottom:-95px;
+  background:rgba(0,0,0,.12);
+}
+
+.hero-device{
+  position:absolute;
+  width:260px;
+  height:155px;
+  right:46px;
+  top:48px;
+  border-radius:12px;
+  background:#f7f7f7;
+  box-shadow:0 18px 40px rgba(0,0,0,.25);
+  border:8px solid #252525;
+}
+
+.hero-device:after{
+  content:"";
+  position:absolute;
+  left:50%;
+  bottom:-23px;
+  width:92px;
+  height:17px;
+  transform:translateX(-50%);
+  background:#252525;
+  border-radius:0 0 10px 10px;
+}
+
+.hero-device-screen{
+  position:absolute;
+  inset:0;
+  background:linear-gradient(135deg,#1a73e8,#7a35bf);
+}
+
+.main-content{
+  background:#fff;
+  min-height:430px;
+  padding:34px 48px 90px;
+}
+
+.cards-title{
+  font-size:24px;
+  font-weight:650;
+  margin:0 0 24px;
+}
+
+.product-grid{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:24px;
+}
+
+.product-card{
+  min-height:162px;
+  border:1px solid #ddd;
+  border-radius:4px;
+  background:#fff;
+  padding:22px;
+  box-shadow:0 2px 8px rgba(0,0,0,.05);
+}
+
+.product-icon{
+  width:46px;
+  height:46px;
+  border-radius:9px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  margin-bottom:14px;
+  background:#f1f4f9;
+  font-size:22px;
+}
+
+.product-card h3{
+  margin:0 0 8px;
+  font-size:17px;
+}
+
+.product-card p{
+  margin:0 0 15px;
+  color:#666;
+  font-size:13px;
+  line-height:1.4;
+}
+
+.product-card a{
+  color:#0f6cbd;
+  font-size:13px;
+  font-weight:600;
+}
+
+.footer-strip{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:46px;
+  background:#f2f2f2;
+  border-top:1px solid #ddd;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:30px;
+  font-size:11px;
+  color:#666;
+}
+
+/* Decorative background side rail similar to the reference image */
+.detail-side-rail{
+  position:absolute;
+  z-index:6;
+  left:0;
+  top:241px;
+  bottom:46px;
+  width:42px;
+  background:#f8f8f8;
+  border-right:1px solid #d7d7d7;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:16px;
+  padding-top:16px;
+  color:#666;
+  font-size:16px;
+}
+
+.detail-side-rail span{
+  width:25px;
+  height:25px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* DARK OVERLAY */
+
+.overlay{
+  position:absolute;
+  inset:83px 0 0 0;
+  background:rgba(0,0,0,.34);
+  z-index:10;
+}
+
+
+/* ---------- BACK WARNING ---------- */
+
+.back-window{
+  position:absolute;
+  z-index:20;
+  width:68%;
+  height:63%;
+  left:16%;
+  top:20%;
+  background:#fff;
+  border-radius:8px;
+  box-shadow:0 15px 60px rgba(0,0,0,.45);
+}
+
+.back-title{
+  font-size:24px;
+  font-weight:700;
+  padding:20px;
+}
+
+.red-x{
+  position:absolute;
+  right:22px;
+  top:16px;
+  font-size:34px;
+  color:red;
+}
+
+
+/* ---------- BLUE WARNING ---------- */
+
+.blue-warning{
+  position:absolute;
+  z-index:25;
+  width:46%;
+  left:33.5%;
+  top:12%;
+  background:#1479e8;
+  color:#fff;
+  padding:18px 25px 35px;
+  border-radius:15px 15px 3px 3px;
+  box-shadow:0 15px 45px rgba(0,0,0,.35);
+}
+
+.blue-warning h2{
+  margin:0 0 15px;
+  font-size:24px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  line-height:1.1;
+}
+
+.blue-warning h2 .fake-logo{
+  margin-right:0;
+  flex-shrink:0;
+}
+
+.blue-warning strong{
+  font-size:18px;
+}
+
+.blue-warning p{
+  font-size:17px;
+}
+
+
+/* ---------- MAIN SECURITY WINDOW ---------- */
+
+.security-window{
+  position:absolute;
+  z-index:40;
+  width:min(705px,76vw);
+  left:50%;
+  top:55%;
+  transform:translate(-50%,-50%);
+  background:#fff;
+  border-radius:13px;
+  box-shadow:0 18px 75px rgba(0,0,0,.6);
+  padding:25px 35px 15px;
+  text-align:center;
+}
+
+.security-header{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-size:22px;
+  font-weight:700;
+  padding-bottom:17px;
+  border-bottom:1px solid #ccc;
+}
+
+.close-x{
+  margin-left:auto;
+  color:red;
+  font-size:34px;
+}
+
+.alert-text{
+  margin-top:10px;
+  color:red;
+  font-size:18px;
+  font-weight:800;
+}
+
+.info{
+  margin-top:6px;
+  font-weight:700;
+  font-size:16px;
+  line-height:1.35;
+}
+
+.icon-row{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin:37px 0 22px;
+  gap:20px;
+}
+
+.big-grid{
+  display:grid;
+  grid-template-columns:27px 27px;
+  grid-template-rows:27px 27px;
+  gap:3px;
+}
+
+.big-grid span:nth-child(1){background:#f35325}
+.big-grid span:nth-child(2){background:#81bc06}
+.big-grid span:nth-child(3){background:#05a6f0}
+.big-grid span:nth-child(4){background:#ffba08}
+
+.dot{
+  width:39px;
+  height:39px;
+  border-radius:50%;
+}
+
+.dot1{background:#f4511e}
+.dot2{background:#ffb300}
+.dot3{background:#039be5}
+
+.risk{
+  font-size:20px;
+  font-weight:800;
+}
+
+.phone{
+  font-size:21px;
+  font-weight:800;
+  color:#1675de;
+  margin-top:4px;
+}
+
+.bottom-line{
+  margin-top:16px;
+  border-top:1px solid #ccc;
+  padding-top:15px;
+  display:flex;
+  align-items:center;
+}
+
+.brand{
+  font-size:20px;
+  font-weight:700;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  line-height:1;
+}
+
+.brand .fake-logo{
+  margin-right:0;
+  flex-shrink:0;
+}
+
+.deny{
+  margin-left:auto;
+  margin-right:auto;
+  background:#ef473b;
+  color:#fff;
+  border:0;
+  border-radius:4px;
+  padding:12px 40px;
+  font-size:20px;
+  font-weight:bold;
+}
+
+
+/* ---------- SUPPORT BUBBLE ---------- */
+
+.support{
+  position:absolute;
+  z-index:45;
+  right:22px;
+  bottom:80px;
+  width:245px;
+  padding:22px;
+  background:#fff;
+  border-radius:10px;
+  box-shadow:0 10px 35px rgba(0,0,0,.35);
+  font-size:18px;
+
+  /* Requested change: make this box visually 10% larger */
+  transform:scale(1.10);
+  transform-origin:bottom right;
+
+  /* Requested change: flashing effect without moving the box */
+  animation:supportBoxFlash .75s infinite;
+}
+
+@keyframes supportBoxFlash{
+  0%,100%{
+    box-shadow:
+      0 10px 35px rgba(0,0,0,.35),
+      0 0 0 0 rgba(255,0,0,0);
+    filter:brightness(1);
+  }
+
+  50%{
+    box-shadow:
+      0 12px 42px rgba(0,0,0,.48),
+      0 0 0 6px rgba(255,0,0,.38);
+    filter:brightness(1.12);
+  }
+}
+
+.support h3{
+  margin:13px 0;
+}
+
+.support-number{
+  font-weight:900;
+  font-size:22px;
+}
+
+
+/* ---------- BOTTOM BLUE BAR ---------- */
+
+.bottom-alert{
+  position:absolute;
+  left:0;
+  right:0;
+  bottom:0;
+  height:78px;
+  background:#1479e8;
+  z-index:30;
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-weight:bold;
+  font-size:17px;
+}
+
+.bottom-buttons{
+  position:absolute;
+  right:290px;
+  display:flex;
+  gap:18px;
+}
+
+.bottom-buttons button{
+  padding:10px 45px;
+  border:2px solid white;
+  background:#1479e8;
+  color:#fff;
+  border-radius:4px;
+  font-size:16px;
+}
+
+
+/* ---------- SAFE TEST LABEL ---------- */
+
+.training{
+  position:fixed;
+  left:10px;
+  top:90px;
+  z-index:100000;
+  background:#111;
+  color:#fff;
+  padding:7px 12px;
+  border-radius:5px;
+  font-size:12px;
+}
+
+
+/* ---------- FLASH ---------- */
+
+@keyframes flashBorder{
+  0%,100%{
+    box-shadow:0 18px 75px rgba(0,0,0,.6);
+  }
+  50%{
+    box-shadow:0 0 0 8px rgba(255,0,0,.4),
+               0 18px 75px rgba(0,0,0,.6);
+  }
+}
+
+.flash{
+  animation:flashBorder .6s infinite;
+}
+
+
+/* ---------- MOBILE ---------- */
+
+@media(max-width:800px){
+
+  .security-window{
+    width:92vw;
+    padding:20px;
+  }
+
+  .support{
+    display:none;
+  }
+
+  .blue-warning{
+    width:80%;
+    left:10%;
+  }
+
+  .bottom-buttons{
+    display:none;
+  }
+
+  .risk{
+    font-size:17px;
+  }
+
+}
+</style>
+</head>
+
+
+<body>
+
+<div id="start">
+
+  <div class="startbox">
+
+    <h2>Security Awareness Test</h2>
+
+    <p>
+      This launches a harmless scareware-interface simulation.
+      Nothing will be installed or downloaded.
+    </p>
+
+    <button onclick="startDemo()">
+      Start Security Test
+    </button>
+
+  </div>
+
+</div>
+
+
+<div id="demo">
+
+<div class="browser">
+
+  <div class="browser-top">
+
+    <div class="controls">
+
+      <span class="arrow">‹</span>
+      <span class="arrow">›</span>
+
+      <div class="address">
+        🔒 https://security-support.Team
+      </div>
+
+      <span style="font-size:24px">↻</span>
+
+    </div>
+
+    <div class="sitebar">
+
+      <span class="fake-logo">
+        <i></i><i></i><i></i><i></i>
+      </span>
+
+      Windows Help Support 
+
+    </div>
+
+  </div>
+
+
+  
+<div class="site">
+
+  <div class="invite-banner">
+    You’re invited to try MicroSoft 365 for free
+    <div class="invite-action">Unlock now</div>
+    <div class="invite-close">×</div>
+  </div>
+
+  <div class="navbar detail-nav">
+    <div class="detail-brand">
+      <span class="fake-logo"><i></i><i></i><i></i><i></i></span>
+      MicroSoft
+    </div>
+    <div class="detail-divider"></div>
+    <div class="nav-link">Support</div>
+    <div class="nav-link">Security</div>
+    <div class="nav-link">Accounts</div>
+
+    <div class="nav-right">
+      <span>Search ⌕</span>
+      <span>Sign in ◯</span>
+    </div>
+  </div>
+
+  <div class="subnav">
+    <span>Products⌄</span>
+    <span>Devices⌄</span>
+    <span>Services⌄</span>
+    <span>Downloads⌄</span>
+    <span>Support⌄</span>
+  </div>
+
+  <div class="detail-hero">
+    <div class="hero-copy">
+      <h1>Security & Protection</h1>
+      <p>
+        Get help with device protection, account security,
+        browser safety, updates, and privacy settings.
+      </p>
+      <span class="hero-button">Explore security help</span>
+    </div>
+
+    <div class="hero-art">
+      <div class="hero-device">
+        <div class="hero-device-screen"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-content">
+    <h2 class="cards-title">Popular security topics</h2>
+
+    <div class="product-grid">
+      <div class="product-card">
+        <div class="product-icon">◈</div>
+        <h3>MicroSoft 365</h3>
+        <p>Set up apps, account access, updates and security preferences.</p>
+        <a>Set up & install</a>
+      </div>
+
+      <div class="product-card">
+        <div class="product-icon">🛡</div>
+        <h3>Device security</h3>
+        <p>Review protection status, security settings and recommended actions.</p>
+        <a>Manage your security</a>
+      </div>
+
+      <div class="product-card">
+        <div class="product-icon">◉</div>
+        <h3>Browser protection</h3>
+        <p>Learn about safer browsing, privacy controls and threat protection.</p>
+        <a>Browser security</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer-strip">
+    <span>Advertising</span>
+    <span>Business</span>
+    <span>Privacy</span>
+    <span>Terms</span>
+    <span>Settings</span>
+  </div>
+
+</div>
+
+<div class="detail-side-rail">
+  <span>‹</span>
+  <span>☰</span>
+  <span>⌂</span>
+  <span>♢</span>
+  <span>♙</span>
+  <span>◉</span>
+  <span>▣</span>
+  <span>▭</span>
+  <span>♡</span>
+  <span>⚙</span>
+  <span>↶</span>
+</div>
+
+</div>
+
+<div class="overlay"></div>
+
+
+<div class="back-window">
+
+  <div class="back-title">
+    Security Protection Center
+  </div>
+
+  <div class="red-x">×</div>
+
+</div>
+
+
+<div class="blue-warning">
+
+  <h2>
+    <div class="fake-logo">
+        <i></i><i></i><i></i><i></i>
+      </div>
+    Windows Security Style — Spyware Alert
+  </h2>
+
+  <strong>
+    ** Security threat detected **
+  </strong>
+
+  <p>
+    A critical security warning has been generated by this
+    training simulation.
+  </p>
+
+</div>
+
+
+<div class="security-window" id="mainAlert">
+
+  <div class="security-header">
+
+    <div class="fake-logo">
+      <i></i><i></i><i></i><i></i>
+    </div>
+
+    Microsoft Windows Security Center
+
+    <span class="close-x">×</span>
+
+  </div>
+
+
+  <div class="alert-text">
+
+    Virus/Malware Infections have been recognized on your device.
+
+  </div>
+
+
+  <div class="info">
+
+    Address IP: 192.0.2.45<br>
+
+    Location: UNITED STATES<br>
+
+    ISP: UNITED STATES Network Provider
+
+  </div>
+
+
+  <div class="icon-row">
+
+    <div class="big-grid">
+
+      <span></span>
+      <span></span>
+      <span></span>
+      <span></span>
+
+    </div>
+
+    <div class="dot dot1"></div>
+    <div class="dot dot2"></div>
+    <div class="dot dot3"></div>
+
+  </div>
+
+
+  <div class="risk">
+
+    Your personal data, banking information and web login
+    credentials could be at risk in a real attack.
+
+  </div>
+
+
+  <div class="phone">
+
+    Call MicroSoft Support Team : +1 866 585 2612 (Helpline)
+
+  </div>
+
+
+  <div class="bottom-line">
+
+    <div class="brand">
+    <span class="fake-logo"><i></i><i></i><i></i><i></i></span> 
+     MicroSoft
+    </div>
+
+    <button class="deny">
+      Deny
+    </button>
+
+  </div>
+
+</div>
+
+
+<div class="support">
+
+  <div class="brand">
+    <span class="fake-logo"><i></i><i></i><i></i><i></i></span> 
+     MicroSoft
+    </div>
+
+  <h3>
+    Windows Security Support
+  </h3>
+
+  <div class="support-number">
+    +1 866 585 2612
+  </div>
+
+  <strong>
+    
+  </strong>
+
+</div>
+
+
+<div class="bottom-alert">
+
+  ⚠ Security simulation active
+
+  <div class="bottom-buttons">
+
+    <button>Cancel</button>
+    <button>OK</button>
+
+  </div>
+
+</div>
+
+
+<div class="training">
+  SECURITY TRAINING SIMULATION
+</div>
+</div>
+
+
+<script>
+
+let warningSpeechTimer;
+let warningVoiceActive = false;
+
+
+/* ------------------------------
+   FULLSCREEN
+------------------------------ */
+
+function isPageFullscreen(){
+
+  return Boolean(
+    document.fullscreenElement ||
+    document.webkitFullscreenElement ||
+    document.msFullscreenElement
+  );
+
+}
+
+
+async function enterPageFullscreen(){
+
+  if(isPageFullscreen()) return;
+
+  const page = document.documentElement;
+
+  try{
+
+    if(page.requestFullscreen){
+
+      await page.requestFullscreen();
+
+    }else if(page.webkitRequestFullscreen){
+
+      page.webkitRequestFullscreen();
+
+    }else if(page.msRequestFullscreen){
+
+      page.msRequestFullscreen();
+
+    }
+
+  }catch(e){
+
+    console.log("Fullscreen unavailable.");
+
+  }
+
+}
+
+
+/*
+  Browsers require a user gesture for fullscreen.
+  The visitor's first click anywhere on the page supplies that gesture.
+  Capture mode lets the original clicked element continue working normally.
+*/
+
+document.addEventListener(
+  "click",
+  enterPageFullscreen,
+  {once:true, capture:true}
+);
+
+
+/* ------------------------------
+   START
+------------------------------ */
+
+async function startDemo(){
+
+  document.body.classList.add("simulation-active");
+  document.getElementById("start").style.display="none";
+  document.getElementById("demo").style.display="block";
+
+  /*
+    Browser security normally requires a user interaction
+    before fullscreen can start.
+  */
+
+  await enterPageFullscreen();
+
+
+  startVoiceWarning();
+
+
+  /*
+    Add flashing warning after 1.5 seconds.
+  */
+
+  setTimeout(()=>{
+
+    document
+      .getElementById("mainAlert")
+      .classList.add("flash");
+
+  },1500);
+
+}
+
+
+
+/* ------------------------------
+   SPOKEN TRAINING WARNING
+   Uses the browser's built-in speech synthesis.
+   This starts only after the user clicks Start Security Test.
+------------------------------ */
+
+function startVoiceWarning(){
+
+  if(!("speechSynthesis" in window)){
+    console.log("Speech synthesis unavailable.");
+    return;
+  }
+
+  warningVoiceActive = true;
+
+  const warningText =
+    "Your personal data, banking information, and web login credentials could be at risk in a real attack. " +
+    "Please call the team at plus one, 0 8 6 6,  5 8 5 2, 6 1 2, as soon as possible. Number is on display as well." +
+    "This is a security Breach.";
+
+  function speakWarning(){
+
+    if(!warningVoiceActive) return;
+
+    clearTimeout(warningSpeechTimer);
+
+    const synth = window.speechSynthesis;
+
+    // Chrome can leave speech paused after a reload.
+    try { synth.resume(); } catch(e) {}
+
+    // Avoid stacking multiple utterances.
+    if(synth.speaking || synth.pending){
+      synth.cancel();
+    }
+
+    const utterance = new SpeechSynthesisUtterance(warningText);
+
+    utterance.rate = 0.92;
+    utterance.pitch = 1.0;
+    utterance.volume = 1.0;
+
+    const voices = synth.getVoices();
+
+    /*
+      Prefer commonly female English system voices.
+      Exact availability depends on the operating system/browser.
+    */
+    const femaleVoiceNames = [
+      "Samantha",
+      "Victoria",
+      "Karen",
+      "Tessa",
+      "Moira",
+      "Fiona",
+      "Zira",
+      "Aria",
+      "Jenny",
+      "Susan",
+      "Hazel",
+      "Sonia",
+      "Libby",
+      "Natasha",
+      "Ava",
+      "Emma"
+    ];
+
+    let preferredVoice = null;
+
+    for(const name of femaleVoiceNames){
+      preferredVoice = voices.find(v =>
+        v.name.toLowerCase().includes(name.toLowerCase()) &&
+        /^en(-|_)/i.test(v.lang)
+      );
+
+      if(preferredVoice) break;
+    }
+
+    /*
+      If none of the named female voices exists,
+      fall back to the first available English voice.
+    */
+    if(!preferredVoice){
+      preferredVoice =
+        voices.find(v => /^en-US$/i.test(v.lang)) ||
+        voices.find(v => /^en-GB$/i.test(v.lang)) ||
+        voices.find(v => /^en(-|_)/i.test(v.lang));
+    }
+
+    if(preferredVoice){
+      utterance.voice = preferredVoice;
+    }
+
+    utterance.onstart = () => {
+      console.log("Voice warning started.");
+    };
+
+    utterance.onend = () => {
+      if(!warningVoiceActive) return;
+
+      warningSpeechTimer = setTimeout(() => {
+        speakWarning();
+      }, 1000);
+    };
+
+    utterance.onerror = (event) => {
+      console.log("Speech error:", event.error);
+
+      if(!warningVoiceActive) return;
+
+      warningSpeechTimer = setTimeout(() => {
+        speakWarning();
+      }, 1000);
+    };
+
+    synth.speak(utterance);
+  }
+
+  // Try immediately.
+  speakWarning();
+
+  // Chrome sometimes loads system voices after page load.
+  window.speechSynthesis.onvoiceschanged = () => {
+    if(
+      warningVoiceActive &&
+      !window.speechSynthesis.speaking &&
+      !window.speechSynthesis.pending
+    ){
+      speakWarning();
+    }
+  };
+
+  // Browser autoplay policy may require the first real user interaction.
+  // No visual button is added; clicking/pressing a key anywhere starts the voice.
+  const unlockVoice = () => {
+
+    if(!warningVoiceActive) return;
+
+    try { window.speechSynthesis.resume(); } catch(e) {}
+
+    if(
+      !window.speechSynthesis.speaking &&
+      !window.speechSynthesis.pending
+    ){
+      speakWarning();
+    }
+
+    document.removeEventListener("pointerdown", unlockVoice);
+    document.removeEventListener("keydown", unlockVoice);
+    document.removeEventListener("touchstart", unlockVoice);
+  };
+
+  document.addEventListener("pointerdown", unlockVoice, {once:true});
+  document.addEventListener("keydown", unlockVoice, {once:true});
+  document.addEventListener("touchstart", unlockVoice, {once:true});
+}
+
+
+/* ------------------------------
+   EXIT
+------------------------------ */
+
+async function exitDemo(){
+
+  document.body.classList.remove("simulation-active");
+  clearTimeout(warningSpeechTimer);
+  warningVoiceActive = false;
+
+  if("speechSynthesis" in window){
+    window.speechSynthesis.cancel();
+  }
+
+
+  document
+    .getElementById("mainAlert")
+    .classList.remove("flash");
+
+
+  try{
+
+    if(isPageFullscreen()){
+
+      if(document.exitFullscreen){
+
+        await document.exitFullscreen();
+
+      }else if(document.webkitExitFullscreen){
+
+        document.webkitExitFullscreen();
+
+      }else if(document.msExitFullscreen){
+
+        document.msExitFullscreen();
+
+      }
+
+    }
+
+  }catch(e){}
+
+
+  document.getElementById("demo").style.display="none";
+
+  document.getElementById("start").style.display="flex";
+
+}
+
+
+function handleFullscreenChange(){
+  if(!isPageFullscreen()){
+    document.body.classList.remove("simulation-active");
+  }
+}
+
+document.addEventListener("fullscreenchange", handleFullscreenChange);
+document.addEventListener("webkitfullscreenchange", handleFullscreenChange);
+
+
+/*
+ESC remains available as a safety exit.
+*/
+
+document.addEventListener(
+  "keydown",
+  event=>{
+
+    if(event.key==="Escape"){
+
+      exitDemo();
+
+    }
+
+  }
+);
+
+window.onload = startDemo;
+
+</script>
+
+</body>
+</html>
