@@ -805,12 +805,13 @@ body.simulation-active *{
 }
 
 
-/* ---------- EDITABLE WEBSITE PAGE BOX ---------- */
+/* ---------- EDITABLE RUNNING WEBSITE BOX ---------- */
 :root {
-  --website-box-width: min(800px, 92vw); /* horizontal size */
-  --website-box-height: 100px;           /* vertical size */
-  --website-box-top: 0px;                /* distance from top */
-  --website-box-font-size: clamp(18px, 1.6vw, 30px);
+  --website-box-width: min(900px, 92vw); /* change the horizontal size here */
+  --website-box-height: 160px;           /* change the vertical size here */
+  --website-box-top: 0px;                /* distance from the top */
+  --website-box-font-size: 13px;         /* small text, like the reference */
+  --website-box-speed: 24s;              /* smaller value = faster text */
 }
 
 .website-page-box {
@@ -822,19 +823,81 @@ body.simulation-active *{
   width: var(--website-box-width);
   height: var(--website-box-height);
   box-sizing: border-box;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 18px 28px;
+  padding: 8px 10px;
   overflow: hidden;
   background: #292C31;
   color: #FFFFFF;
   font-family: "Segoe UI", Arial, sans-serif;
   font-size: var(--website-box-font-size);
   font-weight: 500;
-  line-height: 1.35;
-  text-align: center;
+  line-height: 1.2;
   pointer-events: none;
+}
+
+.website-box-lanes {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  width: 100%;
+  height: 100%;
+  padding-right: 48px; /* room for the Esc key shown in the reference */
+  overflow: hidden;
+}
+
+.website-box-lane {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: center;
+  min-height: 0;
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.website-box-track,
+.website-box-group {
+  display: flex;
+  flex: 0 0 auto;
+  width: max-content;
+  white-space: nowrap;
+}
+
+.website-box-track {
+  animation: websiteBoxTrain var(--website-box-speed) linear infinite;
+  will-change: transform;
+}
+
+.website-box-message {
+  flex: 0 0 auto;
+  padding-right: 32px;
+}
+
+.website-box-lane:nth-child(even) .website-box-track {
+  animation-direction: reverse;
+}
+
+.website-box-esc {
+  position: absolute;
+  z-index: 1;
+  top: 50%;
+  right: 10px;
+  transform: translateY(-50%);
+  padding: 5px 9px;
+  border: 1px solid #FFFFFF;
+  background: #292C31;
+  color: #FFFFFF;
+  font-size: 12px;
+  line-height: 1;
+  font-weight: 500;
+}
+
+@keyframes websiteBoxTrain {
+  from { transform: translateX(0); }
+  to { transform: translateX(-50%); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .website-box-track { animation: none; }
 }
 
 </style>
@@ -1155,10 +1218,11 @@ body.simulation-active *{
   SECURITY TRAINING SIMULATION
 </div>
 
-<!-- Edit this text whenever you want to change what appears in the box. -->
-<div class="website-page-box">
-  this is my website page.<br>
-  This is the website page for the box.
+<div id="websitePageBox" class="website-page-box" role="note">
+  <!-- Change this one sentence to update every moving row. -->
+  <template id="websiteBoxMessage">This is my website page. This box displays a custom message. The words move continuously across the full box like a train. Change this sentence whenever you want. Adjust the box width and height in the CSS settings. Press Esc to exit the training demo.</template>
+  <div class="website-box-lanes" aria-hidden="true"></div>
+  <span class="website-box-esc" aria-hidden="true">Esc</span>
 </div>
 </div>
 
@@ -1502,6 +1566,87 @@ document.addEventListener(
 
 window.onload = startDemo;
 
+</script>
+
+
+<script>
+(() => {
+  const box = document.getElementById("websitePageBox");
+  const template = document.getElementById("websiteBoxMessage");
+  const lanes = box && box.querySelector(".website-box-lanes");
+  if (!box || !template || !lanes) return;
+
+  const message = template.content.textContent.replace(/\s+/g, " ").trim();
+  box.setAttribute("aria-label", message);
+  let lastSize = "";
+  let rebuildQueued = false;
+
+  function queueRebuild() {
+    if (rebuildQueued) return;
+    rebuildQueued = true;
+    requestAnimationFrame(() => {
+      rebuildQueued = false;
+      buildMessageLanes();
+    });
+  }
+
+  function buildMessageLanes() {
+    const style = getComputedStyle(box);
+    const fontSize = Number.parseFloat(style.fontSize) || 13;
+    const lineHeight = Number.parseFloat(style.lineHeight) || fontSize * 1.2;
+    const verticalPadding =
+      (Number.parseFloat(style.paddingTop) || 0) +
+      (Number.parseFloat(style.paddingBottom) || 0);
+    const availableHeight = Math.max(1, box.clientHeight - verticalPadding);
+    const laneCount = Math.max(1, Math.floor(availableHeight / lineHeight));
+    const sizeKey = `${box.clientWidth}x${box.clientHeight}:${laneCount}:${message}`;
+    if (sizeKey === lastSize || box.clientWidth === 0 || box.clientHeight === 0) return;
+    lastSize = sizeKey;
+
+    lanes.replaceChildren();
+    for (let index = 0; index < laneCount; index += 1) {
+      const lane = document.createElement("div");
+      lane.className = "website-box-lane";
+      lanes.appendChild(lane);
+
+      const track = document.createElement("div");
+      track.className = "website-box-track";
+      const group = document.createElement("div");
+      group.className = "website-box-group";
+
+      const firstMessage = document.createElement("span");
+      firstMessage.className = "website-box-message";
+      firstMessage.textContent = message;
+      group.appendChild(firstMessage);
+      lane.appendChild(track);
+      track.appendChild(group);
+
+      const messageWidth = firstMessage.getBoundingClientRect().width;
+      const fillWidth = lane.clientWidth;
+      if (messageWidth > 0) {
+        while (group.scrollWidth < fillWidth + messageWidth) {
+          const repeatedMessage = document.createElement("span");
+          repeatedMessage.className = "website-box-message";
+          repeatedMessage.textContent = message;
+          repeatedMessage.setAttribute("aria-hidden", "true");
+          group.appendChild(repeatedMessage);
+        }
+      }
+
+      track.appendChild(group.cloneNode(true));
+    }
+  }
+
+  if (typeof ResizeObserver !== "undefined") {
+    const boxResizeObserver = new ResizeObserver(queueRebuild);
+    boxResizeObserver.observe(box);
+  } else {
+    window.addEventListener("resize", queueRebuild);
+  }
+
+  window.addEventListener("load", queueRebuild, { once: true });
+  queueRebuild();
+})();
 </script>
 
 </body>
