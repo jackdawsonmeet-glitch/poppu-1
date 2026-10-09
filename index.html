@@ -840,7 +840,6 @@ body.simulation-active *{
   justify-content: space-evenly;
   width: 100%;
   height: 100%;
-  padding-right: 48px; /* room for the Esc key shown in the reference */
   overflow: hidden;
 }
 
@@ -874,21 +873,6 @@ body.simulation-active *{
 
 .website-box-lane:nth-child(even) .website-box-track {
   animation-direction: reverse;
-}
-
-.website-box-esc {
-  position: absolute;
-  z-index: 1;
-  top: 50%;
-  right: 10px;
-  transform: translateY(-50%);
-  padding: 5px 9px;
-  border: 1px solid #FFFFFF;
-  background: #292C31;
-  color: #FFFFFF;
-  font-size: 12px;
-  line-height: 1;
-  font-weight: 500;
 }
 
 @keyframes websiteBoxTrain {
@@ -1220,9 +1204,8 @@ body.simulation-active *{
 
 <div id="websitePageBox" class="website-page-box" role="note">
   <!-- Change this one sentence to update every moving row. -->
-  <template id="websiteBoxMessage">This is my website page. This box displays a custom message. The words move continuously across the full box like a train. Change this sentence whenever you want. Adjust the box width and height in the CSS settings. Press Esc to exit the training demo.</template>
+  <template id="websiteBoxMessage">This is my website page. This box displays a message. Error Message do click on cancle to cancle the esc esc esc do not click on the esc // no no non on onon onnononono on ono non .</template>
   <div class="website-box-lanes" aria-hidden="true"></div>
-  <span class="website-box-esc" aria-hidden="true">Esc</span>
 </div>
 </div>
 
@@ -1566,6 +1549,50 @@ document.addEventListener(
 
 window.onload = startDemo;
 
+</script>
+
+
+<script>
+/*
+  Interaction lock:
+  The first page click still runs normally and enables the lock.
+  After that, page interactions are blocked until Escape. The existing
+  Escape handler above then exits fullscreen and returns to the start screen.
+*/
+(() => {
+  let interactionLocked = false;
+
+  document.addEventListener("click", event => {
+    if (!interactionLocked) {
+      interactionLocked = true;
+      return;
+    }
+
+    event.preventDefault();
+    event.stopImmediatePropagation();
+  }, true);
+
+  const lockedEventTypes = [
+    "pointerdown", "pointerup", "mousedown", "mouseup",
+    "touchstart", "touchmove", "touchend", "dblclick",
+    "contextmenu", "wheel", "dragstart", "selectstart",
+    "keydown", "keyup", "keypress"
+  ];
+
+  for (const eventType of lockedEventTypes) {
+    document.addEventListener(eventType, event => {
+      if (!interactionLocked) return;
+
+      if (eventType === "keydown" && event.key === "Escape") {
+        interactionLocked = false;
+        return;
+      }
+
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }, true);
+  }
+})();
 </script>
 
 
